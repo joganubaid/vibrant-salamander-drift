@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { EnrolledClassroom, OwnedClassroom } from '@/types';
+import { EnrolledClassroom, OwnedClassroom, Classroom } from '@/types';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,6 +11,11 @@ import { CreateClassroomDialog } from '@/components/classrooms/CreateClassroomDi
 import { JoinClassroomDialog } from '@/components/classrooms/JoinClassroomDialog';
 import { ClassroomCard } from '@/components/classrooms/ClassroomCard';
 import { Link } from 'react-router-dom';
+
+// Define an intermediate type for the raw data returned by the Supabase query
+type SupabaseEnrolledClassroomResult = {
+  classroom: (Classroom & { profiles: { display_name: string | null } | null }) | null;
+};
 
 const Classrooms = () => {
   const { user, profile } = useAuth();
@@ -42,14 +47,12 @@ const Classrooms = () => {
         .eq('user_id', user.id);
       if (error) throw new Error(error.message);
       
-      // Fix: Properly map the data to EnrolledClassroom type
-      return data?.map(item => {
-        // Ensure classroom exists and has the required properties
-        if (item.classroom && typeof item.classroom === 'object') {
-          return item.classroom as EnrolledClassroom;
-        }
-        return null;
-      }).filter((classroom): classroom is EnrolledClassroom => classroom !== null) || [];
+      // Explicitly type the data and filter out null classrooms before mapping
+      const typedData: SupabaseEnrolledClassroomResult[] = data || [];
+      
+      return typedData
+        .filter((item): item is { classroom: EnrolledClassroom } => item.classroom !== null)
+        .map(item => item.classroom);
     },
     enabled: !!user,
   });
