@@ -43,7 +43,7 @@ const Dashboard = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: async (subjectData: Partial<Subject> & { id?: string, name: string }) => {
+    mutationFn: async (subjectData: { name: string; threshold: number; color: string; id?: string }) => {
       if (!user) throw new Error('User not authenticated');
       const dataToUpsert = {
         ...subjectData,
@@ -140,7 +140,7 @@ const Dashboard = () => {
             <SubjectCard
               key={subject.id}
               subject={subject}
-              onMarkAttendance={attendanceMutation.mutate}
+              onMarkAttendance={(subjectId, status) => attendanceMutation.mutate({ subjectId, status })}
               onEdit={handleEdit}
               onDelete={handleDeleteRequest}
             />
@@ -167,7 +167,7 @@ const Dashboard = () => {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the subject and all its attendance records.
-            </AlertDialogDescription>
+            </Description>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
