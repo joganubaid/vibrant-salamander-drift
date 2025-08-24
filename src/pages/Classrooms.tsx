@@ -37,7 +37,7 @@ const Classrooms = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('enrollments')
-        .select('classroom:classrooms(*, profiles:owner_id(display_name))')
+        .select('classroom:classrooms!inner(*, profiles:owner_id(display_name))')
         .eq('user_id', user.id);
       if (error) throw new Error(error.message);
       // The query returns an array of { classroom: ... }, so we need to map it

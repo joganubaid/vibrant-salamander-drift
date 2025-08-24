@@ -54,7 +54,7 @@ export type Enrollment = {
 export type EnrolledClassroom = Classroom & {
   profiles: {
     display_name: string | null;
-  }
+  } | null;
 };
 
 export type OwnedClassroom = Classroom & {
