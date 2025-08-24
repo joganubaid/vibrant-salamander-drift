@@ -6,14 +6,16 @@ import { useAuth } from '@/context/AuthContext';
 import { Classroom, Material } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft, Upload, Share2 } from 'lucide-react';
 import { MaterialUploadDialog } from '@/components/classrooms/MaterialUploadDialog';
 import { MaterialList } from '@/components/classrooms/MaterialList';
+import { InviteDialog } from '@/components/classrooms/InviteDialog';
 
 const ClassroomDetail = () => {
   const { id: classroomId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
   const { data: classroom, isLoading: isLoadingClassroom } = useQuery<Classroom | null>({
     queryKey: ['classroom', classroomId],
@@ -84,21 +86,34 @@ const ClassroomDetail = () => {
           <p className="text-muted-foreground">Join Code: <span className="font-mono bg-muted px-2 py-1 rounded">{classroom.join_code}</span></p>
         </div>
         {isOwner && (
-          <Button onClick={() => setIsUploadDialogOpen(true)}>
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Material
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setIsInviteDialogOpen(true)}>
+              <Share2 className="h-4 w-4 mr-2" />
+              Invite
+            </Button>
+            <Button onClick={() => setIsUploadDialogOpen(true)}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Material
+            </Button>
+          </div>
         )}
       </header>
 
       <MaterialList materials={materials || []} />
 
       {isOwner && classroomId && (
-        <MaterialUploadDialog
-          open={isUploadDialogOpen}
-          onOpenChange={setIsUploadDialogOpen}
-          classroomId={classroomId}
-        />
+        <>
+          <MaterialUploadDialog
+            open={isUploadDialogOpen}
+            onOpenChange={setIsUploadDialogOpen}
+            classroomId={classroomId}
+          />
+          <InviteDialog
+            open={isInviteDialogOpen}
+            onOpenChange={setIsInviteDialogOpen}
+            joinCode={classroom.join_code}
+          />
+        </>
       )}
     </div>
   );

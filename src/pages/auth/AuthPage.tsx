@@ -1,17 +1,29 @@
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { SignUpForm } from '@/components/auth/SignUpForm';
+import { useEffect } from 'react';
 
 const AuthPage = () => {
   const { session } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const isSignUp = location.pathname === '/signup';
 
+  useEffect(() => {
+    const joinCode = localStorage.getItem('join_classroom_code');
+    if (session && joinCode) {
+      navigate(`/join/${joinCode}`);
+    } else if (session) {
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
+
   if (session) {
-    return <Navigate to="/dashboard" replace />;
+    // Show a loading or redirecting state while useEffect runs
+    return null;
   }
 
   return (
@@ -30,7 +42,6 @@ const AuthPage = () => {
             providers={[]}
             view="sign_in"
             theme="light"
-            redirectTo={`${window.location.origin}/dashboard`}
           />
         )}
 

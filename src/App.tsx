@@ -15,6 +15,7 @@ import ConfirmationRequired from "./pages/auth/ConfirmationRequired";
 import Classrooms from "./pages/Classrooms";
 import ClassroomDetail from "./pages/ClassroomDetail";
 import CalendarPage from "./pages/Calendar";
+import JoinClassroom from "./pages/JoinClassroom";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<AuthPage />} />
+            <Route path="/join/:joinCode" element={<JoinClassroom />} />
             <Route path="/confirmation-required" element={<ConfirmationRequired />} />
             <Route
               path="/dashboard"
