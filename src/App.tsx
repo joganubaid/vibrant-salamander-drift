@@ -17,6 +17,7 @@ import ClassroomDetail from "./pages/ClassroomDetail";
 import CalendarPage from "./pages/Calendar";
 import JoinClassroom from "./pages/JoinClassroom";
 import ProfilePage from "./pages/Profile";
+import { ThemeProvider } from "./components/theme-provider";
 
 const queryClient = new QueryClient();
 
@@ -25,79 +26,81 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/signup" element={<AuthPage />} />
-            <Route path="/join/:joinCode" element={<JoinClassroom />} />
-            <Route path="/confirmation-required" element={<ConfirmationRequired />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/timetable"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Timetable />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/calendar"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <CalendarPage />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/classrooms"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Classrooms />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/classrooms/:id"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <ClassroomDetail />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <ProfilePage />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/signup" element={<AuthPage />} />
+              <Route path="/join/:joinCode" element={<JoinClassroom />} />
+              <Route path="/confirmation-required" element={<ConfirmationRequired />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/timetable"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Timetable />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/calendar"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <CalendarPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/classrooms"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Classrooms />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/classrooms/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ClassroomDetail />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ProfilePage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
