@@ -156,7 +156,15 @@ const Dashboard = () => {
       <SubjectDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        onSubmit={(values) => mutation.mutate({ ...values, id: editingSubject?.id })}
+        onSubmit={(values) => {
+          const subjectData = {
+            name: values.name,
+            threshold: values.threshold,
+            color: values.color,
+            id: editingSubject?.id,
+          };
+          mutation.mutate(subjectData);
+        }}
         subject={editingSubject}
         isPending={mutation.isPending}
       />
