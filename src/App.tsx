@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import Timetable from "./pages/Timetable";
+import ConfirmationRequired from "./pages/auth/ConfirmationRequired";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<AuthPage />} />
+            <Route path="/confirmation-required" element={<ConfirmationRequired />} />
             <Route
               path="/dashboard"
               element={
