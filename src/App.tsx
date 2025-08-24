@@ -13,6 +13,7 @@ import Layout from "./components/Layout";
 import Timetable from "./pages/Timetable";
 import ConfirmationRequired from "./pages/auth/ConfirmationRequired";
 import Classrooms from "./pages/Classrooms";
+import ClassroomDetail from "./pages/ClassroomDetail";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Classrooms />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/classrooms/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <ClassroomDetail />
                   </Layout>
                 </ProtectedRoute>
               }

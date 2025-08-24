@@ -10,6 +10,7 @@ import { showError, showSuccess } from '@/utils/toast';
 import { CreateClassroomDialog } from '@/components/classrooms/CreateClassroomDialog';
 import { JoinClassroomDialog } from '@/components/classrooms/JoinClassroomDialog';
 import { ClassroomCard } from '@/components/classrooms/ClassroomCard';
+import { Link } from 'react-router-dom';
 
 const Classrooms = () => {
   const { user, profile } = useAuth();
@@ -40,7 +41,6 @@ const Classrooms = () => {
         .select('classroom:classrooms!inner(*, profiles:owner_id(display_name))')
         .eq('user_id', user.id);
       if (error) throw new Error(error.message);
-      // The query returns an array of { classroom: ... }, so we need to map it
       return data?.map(item => item.classroom as EnrolledClassroom).filter(Boolean) || [];
     },
     enabled: !!user,
@@ -114,11 +114,12 @@ const Classrooms = () => {
               <h2 className="text-2xl font-semibold mb-4">Owned by You</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {ownedClassrooms.map((classroom) => (
-                  <ClassroomCard
-                    key={classroom.id}
-                    name={classroom.name}
-                    memberCount={classroom.enrollments[0]?.count || 0}
-                  />
+                  <Link to={`/classrooms/${classroom.id}`} key={classroom.id}>
+                    <ClassroomCard
+                      name={classroom.name}
+                      memberCount={classroom.enrollments[0]?.count || 0}
+                    />
+                  </Link>
                 ))}
               </div>
             </section>
@@ -129,11 +130,12 @@ const Classrooms = () => {
             {enrolledClassrooms && enrolledClassrooms.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {enrolledClassrooms.map((classroom) => (
-                  <ClassroomCard
-                    key={classroom.id}
-                    name={classroom.name}
-                    ownerName={classroom.profiles?.display_name || 'N/A'}
-                  />
+                  <Link to={`/classrooms/${classroom.id}`} key={classroom.id}>
+                    <ClassroomCard
+                      name={classroom.name}
+                      ownerName={classroom.profiles?.display_name || 'N/A'}
+                    />
+                  </Link>
                 ))}
               </div>
             ) : (

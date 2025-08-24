@@ -60,3 +60,15 @@ export type EnrolledClassroom = Classroom & {
 export type OwnedClassroom = Classroom & {
   enrollments: [{ count: number }];
 };
+
+export type Material = {
+  id: string;
+  classroom_id: string;
+  uploader_id: string;
+  subject_name: string;
+  unit_name: string | null;
+  file_name: string;
+  file_path: string;
+  file_type: string | null;
+  uploaded_at: string;
+};
