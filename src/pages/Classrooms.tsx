@@ -41,7 +41,15 @@ const Classrooms = () => {
         .select('classroom:classrooms!inner(*, profiles:owner_id(display_name))')
         .eq('user_id', user.id);
       if (error) throw new Error(error.message);
-      return data?.map(item => item.classroom as EnrolledClassroom).filter(Boolean) || [];
+      
+      // Fix: Properly map the data to EnrolledClassroom type
+      return data?.map(item => {
+        // Ensure classroom exists and has the required properties
+        if (item.classroom && typeof item.classroom === 'object') {
+          return item.classroom as EnrolledClassroom;
+        }
+        return null;
+      }).filter((classroom): classroom is EnrolledClassroom => classroom !== null) || [];
     },
     enabled: !!user,
   });
