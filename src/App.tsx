@@ -14,6 +14,7 @@ import Timetable from "./pages/Timetable";
 import ConfirmationRequired from "./pages/auth/ConfirmationRequired";
 import Classrooms from "./pages/Classrooms";
 import ClassroomDetail from "./pages/ClassroomDetail";
+import CalendarPage from "./pages/Calendar";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Timetable />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <CalendarPage />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -72,3 +72,7 @@ export type Material = {
   file_type: string | null;
   uploaded_at: string;
 };
+
+export type AttendanceRecordWithSubject = AttendanceRecord & {
+  subjects: Pick<Subject, 'name' | 'color'>;
+};
