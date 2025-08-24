@@ -9,6 +9,8 @@ import { AuthProvider } from "./context/AuthContext";
 import AuthPage from "./pages/auth/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
+import Timetable from "./pages/Timetable";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +29,19 @@ const App = () => (
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/timetable"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Timetable />
+                  </Layout>
                 </ProtectedRoute>
               }
             />

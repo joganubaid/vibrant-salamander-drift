@@ -21,3 +21,17 @@ export type AttendanceRecord = {
 export type SubjectWithAttendance = Subject & {
   attendance_records: AttendanceRecord[];
 };
+
+export type TimetableEntry = {
+  id: string;
+  user_id: string;
+  subject_id: string;
+  day_of_week: number; // 0 = Sunday, 6 = Saturday
+  start_time: string; // "HH:mm:ss"
+  end_time: string; // "HH:mm:ss"
+  created_at: string;
+};
+
+export type TimetableEntryWithSubject = TimetableEntry & {
+  subjects: Pick<Subject, 'name' | 'color'>;
+};

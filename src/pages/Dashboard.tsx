@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
@@ -118,45 +118,40 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">My Subjects</h1>
-            <p className="text-muted-foreground">Track your attendance for all your subjects here.</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button onClick={() => { setEditingSubject(null); setIsDialogOpen(true); }}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Add Subject
-            </Button>
-            <Button onClick={signOut} variant="outline">Sign Out</Button>
-          </div>
-        </header>
+    <div className="max-w-7xl mx-auto">
+      <header className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">My Subjects</h1>
+          <p className="text-muted-foreground">Track your attendance for all your subjects here.</p>
+        </div>
+        <Button onClick={() => { setEditingSubject(null); setIsDialogOpen(true); }}>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add Subject
+        </Button>
+      </header>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-64 w-full" />)}
-          </div>
-        ) : subjects && subjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {subjects.map((subject) => (
-              <SubjectCard
-                key={subject.id}
-                subject={subject}
-                onMarkAttendance={attendanceMutation.mutate}
-                onEdit={handleEdit}
-                onDelete={handleDeleteRequest}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 border-2 border-dashed rounded-lg">
-            <h3 className="text-xl font-semibold">No subjects yet!</h3>
-            <p className="text-muted-foreground mt-2">Click "Add Subject" to get started.</p>
-          </div>
-        )}
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-64 w-full" />)}
+        </div>
+      ) : subjects && subjects.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {subjects.map((subject) => (
+            <SubjectCard
+              key={subject.id}
+              subject={subject}
+              onMarkAttendance={attendanceMutation.mutate}
+              onEdit={handleEdit}
+              onDelete={handleDeleteRequest}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 border-2 border-dashed rounded-lg">
+          <h3 className="text-xl font-semibold">No subjects yet!</h3>
+          <p className="text-muted-foreground mt-2">Click "Add Subject" to get started.</p>
+        </div>
+      )}
 
       <SubjectDialog
         open={isDialogOpen}
@@ -172,7 +167,7 @@ const Dashboard = () => {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the subject and all its attendance records.
-            </AlertDialogDescription>
+            </Description>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
