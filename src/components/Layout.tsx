@@ -3,11 +3,12 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Menu, BookOpen, Calendar } from 'lucide-react';
+import { Menu, BookOpen, Calendar, Users } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: BookOpen },
   { name: 'Timetable', href: '/timetable', icon: Calendar },
+  { name: 'Classrooms', href: '/classrooms', icon: Users },
 ];
 
 const Layout = ({ children }: { children: ReactNode }) => {

@@ -35,3 +35,28 @@ export type TimetableEntry = {
 export type TimetableEntryWithSubject = TimetableEntry & {
   subjects: Pick<Subject, 'name' | 'color'>;
 };
+
+export type Classroom = {
+  id: string;
+  name: string;
+  owner_id: string;
+  join_code: string;
+  created_at: string;
+};
+
+export type Enrollment = {
+  id: string;
+  user_id: string;
+  classroom_id: string;
+  created_at: string;
+};
+
+export type EnrolledClassroom = Classroom & {
+  profiles: {
+    display_name: string | null;
+  }
+};
+
+export type OwnedClassroom = Classroom & {
+  enrollments: [{ count: number }];
+};

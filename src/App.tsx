@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import Timetable from "./pages/Timetable";
 import ConfirmationRequired from "./pages/auth/ConfirmationRequired";
+import Classrooms from "./pages/Classrooms";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Timetable />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/classrooms"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Classrooms />
                   </Layout>
                 </ProtectedRoute>
               }
