@@ -76,3 +76,11 @@ export type Material = {
 export type AttendanceRecordWithSubject = AttendanceRecord & {
   subjects: Pick<Subject, 'name' | 'color'>;
 };
+
+export type ChatMessage = {
+  id: string;
+  sender: 'bot' | 'user';
+  text?: string;
+  options?: { label: string; value: string; type: 'subject' | 'unit' | 'material' | 'back' }[];
+  file?: { name: string; path: string };
+};

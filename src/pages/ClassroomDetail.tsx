@@ -10,6 +10,8 @@ import { ArrowLeft, Upload, Share2 } from 'lucide-react';
 import { MaterialUploadDialog } from '@/components/classrooms/MaterialUploadDialog';
 import { MaterialList } from '@/components/classrooms/MaterialList';
 import { InviteDialog } from '@/components/classrooms/InviteDialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Chatbot } from '@/components/classrooms/Chatbot';
 
 const ClassroomDetail = () => {
   const { id: classroomId } = useParams<{ id: string }>();
@@ -99,7 +101,18 @@ const ClassroomDetail = () => {
         )}
       </header>
 
-      <MaterialList materials={materials || []} />
+      <Tabs defaultValue="materials">
+        <TabsList>
+          <TabsTrigger value="materials">Material List</TabsTrigger>
+          <TabsTrigger value="chatbot">Chatbot</TabsTrigger>
+        </TabsList>
+        <TabsContent value="materials">
+          <MaterialList materials={materials || []} />
+        </TabsContent>
+        <TabsContent value="chatbot">
+          <Chatbot materials={materials || []} />
+        </TabsContent>
+      </Tabs>
 
       {isOwner && classroomId && (
         <>
