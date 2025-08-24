@@ -3,7 +3,16 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Menu, BookOpen, Calendar, Users, CalendarDays } from 'lucide-react';
+import { Menu, BookOpen, Calendar, Users, CalendarDays, User as UserIcon } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: BookOpen },
@@ -13,12 +22,18 @@ const navItems = [
 ];
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
+  };
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return <UserIcon className="h-5 w-5" />;
+    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    return initials;
   };
 
   return (
@@ -69,9 +84,33 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </SheetContent>
         </Sheet>
         <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
-          <Button onClick={handleSignOut} variant="outline">
-            Sign Out
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <Avatar>
+                  <AvatarImage src="" alt={profile?.display_name || ''} />
+                  <AvatarFallback>{getInitials(profile?.display_name)}</AvatarFallback>
+                </Avatar>
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{profile?.display_name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut}>
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
       <main className="flex-grow bg-muted/40 p-4 sm:p-6 lg:p-8">

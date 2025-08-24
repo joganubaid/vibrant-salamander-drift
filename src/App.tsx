@@ -16,6 +16,7 @@ import Classrooms from "./pages/Classrooms";
 import ClassroomDetail from "./pages/ClassroomDetail";
 import CalendarPage from "./pages/Calendar";
 import JoinClassroom from "./pages/JoinClassroom";
+import ProfilePage from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <ClassroomDetail />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <ProfilePage />
                   </Layout>
                 </ProtectedRoute>
               }
