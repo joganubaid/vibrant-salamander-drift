@@ -48,7 +48,7 @@ const Classrooms = () => {
       if (error) throw new Error(error.message);
       
       // Explicitly type the data and filter out null classrooms before mapping
-      const typedData: SupabaseEnrolledClassroomResult[] = data || [];
+      const typedData: SupabaseEnrolledClassroomResult[] = (data as any) || [];
       
       return typedData
         .filter((item): item is { classroom: EnrolledClassroom } => item.classroom !== null)
