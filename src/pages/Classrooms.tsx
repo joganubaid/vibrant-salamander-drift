@@ -37,11 +37,11 @@ const Classrooms = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('enrollments')
-        .select('classrooms(*, profiles:owner_id(display_name))')
+        .select('classroom:classrooms(*, profiles:owner_id(display_name))')
         .eq('user_id', user.id);
       if (error) throw new Error(error.message);
-      // The query returns an array of { classrooms: ... }, so we need to map it
-      return data?.map(item => item.classrooms as EnrolledClassroom) || [];
+      // The query returns an array of { classroom: ... }, so we need to map it
+      return data?.map(item => item.classroom as EnrolledClassroom).filter(Boolean) || [];
     },
     enabled: !!user,
   });
