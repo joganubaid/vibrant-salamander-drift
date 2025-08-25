@@ -34,7 +34,7 @@ const Classrooms = () => {
       if (error) throw new Error(error.message);
       return data || [];
     },
-    enabled: !!user && profile?.role === 'owner',
+    enabled: !!user, // Enable for all authenticated users, not just owners
   });
 
   const { data: enrolledClassrooms, isLoading: isLoadingEnrolled } = useQuery<EnrolledClassroom[]>({
@@ -102,12 +102,11 @@ const Classrooms = () => {
           <p className="text-muted-foreground">Manage and access your classrooms.</p>
         </div>
         <div className="flex gap-2">
-          {profile?.role === 'owner' && (
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Create Classroom
-            </Button>
-          )}
+          {/* Removed conditional rendering based on profile.role */}
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Create Classroom
+          </Button>
           <Button variant="outline" onClick={() => setIsJoinDialogOpen(true)}>
             Join Classroom
           </Button>
@@ -120,7 +119,8 @@ const Classrooms = () => {
         </div>
       ) : (
         <div className="space-y-8">
-          {profile?.role === 'owner' && ownedClassrooms && ownedClassrooms.length > 0 && (
+          {/* Display owned classrooms if any, regardless of profile role */}
+          {ownedClassrooms && ownedClassrooms.length > 0 && (
             <section>
               <h2 className="text-2xl font-semibold mb-4">Owned by You</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
