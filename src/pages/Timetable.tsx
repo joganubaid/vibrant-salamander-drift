@@ -107,14 +107,6 @@ const Timetable = () => {
     }
   };
 
-  const formatTime = (time: string) => {
-    const [hour, minute] = time.split(':');
-    const h = parseInt(hour, 10);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const formattedHour = h % 12 === 0 ? 12 : h % 12;
-    return `${formattedHour}:${minute} ${ampm}`;
-  };
-
   const isLoading = isLoadingTimetable || isLoadingSubjects;
 
   return (
@@ -139,7 +131,7 @@ const Timetable = () => {
           {daysOfWeek.map((day, index) => {
             const entriesForDay = timetable
               ?.filter((e) => e.day_of_week === index)
-              .sort((a, b) => a.start_time.localeCompare(b.start_time));
+              .sort((a, b) => a.subjects.name.localeCompare(b.subjects.name)); // Sort by subject name now
             return (
               <Card key={day}>
                 <CardHeader>
@@ -153,7 +145,7 @@ const Timetable = () => {
                           <div>
                             <p className="font-semibold">{entry.subjects.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              {formatTime(entry.start_time)} - {formatTime(entry.end_time)}
+                              Scheduled Class
                             </p>
                           </div>
                           <DropdownMenu>

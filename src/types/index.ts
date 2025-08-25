@@ -27,8 +27,6 @@ export type TimetableEntry = {
   user_id: string;
   subject_id: string;
   day_of_week: number; // 0 = Sunday, 6 = Saturday
-  start_time: string; // "HH:mm:ss"
-  end_time: string; // "HH:mm:ss"
   created_at: string;
 };
 

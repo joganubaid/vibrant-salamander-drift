@@ -18,7 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -31,8 +30,6 @@ import { Subject, TimetableEntry } from '@/types';
 const formSchema = z.object({
   subject_id: z.string().uuid('Please select a subject.'),
   day_of_week: z.coerce.number().min(0).max(6),
-  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format. Use HH:MM.'),
-  end_time: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format. Use HH:MM.'),
 });
 
 type TimetableFormValues = z.infer<typeof formSchema>;
@@ -62,8 +59,6 @@ export const TimetableDialog = ({ open, onOpenChange, onSubmit, entry, subjects,
     defaultValues: {
       subject_id: entry?.subject_id || '',
       day_of_week: entry?.day_of_week ?? 1,
-      start_time: entry?.start_time.substring(0, 5) || '',
-      end_time: entry?.end_time.substring(0, 5) || '',
     },
   });
 
@@ -126,34 +121,6 @@ export const TimetableDialog = ({ open, onOpenChange, onSubmit, entry, subjects,
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="start_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Time</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="end_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>End Time</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
                 {isPending ? 'Saving...' : 'Save Class'}
