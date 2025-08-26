@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">vibrant-salamander-drift</string>
+    <string name="title_activity_main">vibrant-salamander-drift</string>
+    <string name="package_name">com.example.vibrantsalamanderdrift</string>
+    <string name="custom_url_scheme">com.example.vibrantsalamanderdrift</string>
+</resources>
