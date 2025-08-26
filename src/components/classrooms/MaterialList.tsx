@@ -34,15 +34,15 @@ export const MaterialList = ({ materials }: MaterialListProps) => {
         <CardTitle>Study Materials</CardTitle>
         <CardDescription>All the files shared in this classroom.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-x-auto"> {/* Added overflow-x-auto here */}
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>File Name</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead>Unit</TableHead>
-              <TableHead>Uploaded On</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="min-w-[150px]">File Name</TableHead> {/* Added min-width for better table display */}
+              <TableHead className="min-w-[100px]">Subject</TableHead>
+              <TableHead className="min-w-[100px]">Unit</TableHead>
+              <TableHead className="min-w-[150px]">Uploaded On</TableHead>
+              <TableHead className="text-right min-w-[120px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

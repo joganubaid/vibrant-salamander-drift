@@ -54,7 +54,7 @@ const ClassroomDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 p-4 sm:p-6 lg:p-8">
         <Skeleton className="h-10 w-1/4" />
         <Skeleton className="h-8 w-1/2" />
         <div className="flex justify-end">
@@ -67,7 +67,7 @@ const ClassroomDetail = () => {
 
   if (!classroom) {
     return (
-      <div className="text-center">
+      <div className="text-center p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold">Classroom not found</h2>
         <Button asChild variant="link">
           <Link to="/classrooms">Go back to classrooms</Link>
@@ -88,7 +88,7 @@ const ClassroomDetail = () => {
           <p className="text-muted-foreground">Join Code: <span className="font-mono bg-muted px-2 py-1 rounded">{classroom.join_code}</span></p>
         </div>
         {isOwner && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button variant="outline" onClick={() => setIsInviteDialogOpen(true)}>
               <Share2 className="h-4 w-4 mr-2" />
               Invite
@@ -102,7 +102,7 @@ const ClassroomDetail = () => {
       </header>
 
       <Tabs defaultValue="materials">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="materials">Material List</TabsTrigger>
           <TabsTrigger value="chatbot">Chatbot</TabsTrigger>
         </TabsList>

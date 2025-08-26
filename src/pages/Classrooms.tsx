@@ -96,12 +96,12 @@ const Classrooms = () => {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <header className="flex justify-between items-center mb-6">
+      <header className="flex justify-between items-center mb-6 flex-wrap gap-2">
         <div>
           <h1 className="text-3xl font-bold">My Classrooms</h1>
           <p className="text-muted-foreground">Manage and access your classrooms.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {/* Removed conditional rendering based on profile.role */}
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <PlusCircle className="h-4 w-4 mr-2" />
