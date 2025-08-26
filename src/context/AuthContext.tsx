@@ -24,14 +24,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Start loading as true
 
   useEffect(() => {
-    const fetchUserProfile = async (user: User) => {
+    let isMounted = true; // Flag to prevent state updates on unmounted component
+
+    const fetchUserProfile = async (currentUser: User) => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', currentUser.id)
         .single();
       
       if (error) {
@@ -41,24 +43,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return data;
     };
 
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      const currentUser = session?.user;
-      setUser(currentUser ?? null);
-      if (currentUser) {
-        const userProfile = await fetchUserProfile(currentUser);
-        setProfile(userProfile);
-      }
-      setLoading(false);
-    };
-
-    getSession();
-
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        const currentUser = session?.user;
+      async (_event, currentSession) => {
+        if (!isMounted) return;
+
+        setSession(currentSession);
+        const currentUser = currentSession?.user;
         setUser(currentUser ?? null);
         
         if (currentUser) {
@@ -67,14 +57,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setProfile(null);
         }
-        setLoading(false);
+        setLoading(false); // Set loading to false only after the listener has processed the initial state
       }
     );
 
+    // Cleanup function for the effect
     return () => {
+      isMounted = false;
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, []); // Empty dependency array, runs once on mount
 
   const signOut = async () => {
     await supabase.auth.signOut();
