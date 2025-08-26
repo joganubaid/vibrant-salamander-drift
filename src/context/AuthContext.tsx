@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (error) {
         console.error('Error fetching profile:', error);
+        // Do not throw here, just return null or handle gracefully
         return null;
       }
       return data;
@@ -52,12 +53,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(currentUser ?? null);
         
         if (currentUser) {
-          const userProfile = await fetchUserProfile(currentUser);
-          setProfile(userProfile);
+          try {
+            const userProfile = await fetchUserProfile(currentUser);
+            setProfile(userProfile);
+          } catch (error) {
+            console.error('Failed to fetch user profile:', error);
+            setProfile(null); // Ensure profile is null on error
+          }
         } else {
           setProfile(null);
         }
-        setLoading(false); // Set loading to false only after the listener has processed the initial state
+        setLoading(false); // Always set loading to false after auth state is processed
       }
     );
 
