@@ -27,8 +27,10 @@ interface SubjectCardProps {
 
 export const SubjectCard = ({ subject, onMarkAttendance, onEdit, onDelete }: SubjectCardProps) => {
   const { percentage, attended, missed, total } = useMemo(() => {
-    const attended = subject.attendance_records.filter((r) => r.status === 'attended').length;
-    const missed = subject.attendance_records.filter((r) => r.status === 'missed').length;
+    // Ensure attendance_records is an array, even if it's undefined or null
+    const records = subject.attendance_records ?? [];
+    const attended = records.filter((r) => r.status === 'attended').length;
+    const missed = records.filter((r) => r.status === 'missed').length;
     const total = attended + missed;
     const percentage = total > 0 ? Math.round((attended / total) * 100) : 0;
     return { percentage, attended, missed, total };
@@ -38,7 +40,9 @@ export const SubjectCard = ({ subject, onMarkAttendance, onEdit, onDelete }: Sub
 
   const todayRecord = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
-    return subject.attendance_records.find((r) => r.date === today);
+    // Ensure attendance_records is an array, even if it's undefined or null
+    const records = subject.attendance_records ?? [];
+    return records.find((r) => r.date === today);
   }, [subject.attendance_records]);
 
   return (
