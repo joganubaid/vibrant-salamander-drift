@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { EnrolledClassroom, OwnedClassroom, Classroom } from '@/types';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Loader2 } from 'lucide-react'; // Import Loader2 for a spinner
 import { Skeleton } from '@/components/ui/skeleton';
 import { showError, showSuccess } from '@/utils/toast';
 import { CreateClassroomDialog } from '@/components/classrooms/CreateClassroomDialog';
@@ -114,8 +114,12 @@ const Classrooms = () => {
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-40 w-full" />)}
+        <div className="text-center py-16">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+          <p className="mt-4 text-lg text-muted-foreground">Loading classrooms...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-40 w-full" />)}
+          </div>
         </div>
       ) : (
         <div className="space-y-8">
