@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { AttendanceRecordWithSubject, Subject, AttendanceRecord } from '@/types';
+import { AttendanceRecordWithSubject, Subject, AttendanceRecord, TimetableEntryWithSubject } from '@/types';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState } from 'react';
@@ -37,6 +37,20 @@ const CalendarPage = () => {
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase.from('subjects').select('*').eq('user_id', user.id);
+      if (error) throw new Error(error.message);
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const { data: timetable, isLoading: isLoadingTimetable } = useQuery<TimetableEntryWithSubject[]>({
+    queryKey: ['timetable', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('timetable')
+        .select('*, subjects(name, color)')
+        .eq('user_id', user.id);
       if (error) throw new Error(error.message);
       return data || [];
     },
@@ -80,7 +94,7 @@ const CalendarPage = () => {
     setIsMarkAttendanceDialogOpen(true);
   };
 
-  const isLoading = isLoadingAttendance || isLoadingSubjects;
+  const isLoading = isLoadingAttendance || isLoadingSubjects || isLoadingTimetable;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -153,12 +167,13 @@ const CalendarPage = () => {
         </div>
       )}
 
-      {selectedDay && subjects && (
+      {selectedDay && subjects && timetable && (
         <MarkAttendanceDialog
           open={isMarkAttendanceDialogOpen}
           onOpenChange={setIsMarkAttendanceDialogOpen}
           selectedDate={selectedDay}
-          subjects={subjects}
+          subjects={subjects} // All subjects
+          timetable={timetable} // All timetable entries
           existingRecord={editingAttendanceRecord}
         />
       )}

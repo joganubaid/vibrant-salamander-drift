@@ -26,13 +26,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Subject, AttendanceRecord } from '@/types';
-import { format } from 'date-fns';
+import { Subject, AttendanceRecord, TimetableEntryWithSubject } from '@/types';
+import { format, getDay } from 'date-fns';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { showError, showSuccess } from '@/utils/toast';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Switch } from '@/components/ui/switch'; // Import Switch component
 
 const formSchema = z.object({
   subject_id: z.string().uuid('Please select a subject.'),
@@ -47,7 +48,8 @@ interface MarkAttendanceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedDate: Date | undefined;
-  subjects: Subject[];
+  subjects: Subject[]; // All subjects
+  timetable: TimetableEntryWithSubject[]; // All timetable entries
   existingRecord?: AttendanceRecord | null;
 }
 
@@ -56,10 +58,12 @@ export const MarkAttendanceDialog = ({
   onOpenChange,
   selectedDate,
   subjects,
+  timetable,
   existingRecord,
 }: MarkAttendanceDialogProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [showAllSubjects, setShowAllSubjects] = useState(false); // State for the toggle
 
   const form = useForm<MarkAttendanceFormValues>({
     resolver: zodResolver(formSchema),
@@ -69,15 +73,43 @@ export const MarkAttendanceDialog = ({
     },
   });
 
-  // Reset form values when dialog opens or existingRecord changes
+  // Reset form values and toggle state when dialog opens or existingRecord changes
   useEffect(() => {
     if (open) {
       form.reset({
         subject_id: existingRecord?.subject_id || '',
         status: existingRecord?.status || 'attended',
       });
+      setShowAllSubjects(false); // Reset toggle when dialog opens
     }
   }, [open, existingRecord, form]);
+
+  const filteredSubjects = useMemo(() => {
+    if (!selectedDate || showAllSubjects) {
+      return subjects; // Show all subjects if toggle is on or no date selected
+    }
+
+    const dayOfWeek = getDay(selectedDate); // 0 for Sunday, 1 for Monday, etc.
+    const scheduledSubjectIds = timetable
+      .filter(entry => entry.day_of_week === dayOfWeek)
+      .map(entry => entry.subject_id);
+
+    // Filter subjects to only include those scheduled for the selected day
+    const scheduledSubjects = subjects.filter(subject =>
+      scheduledSubjectIds.includes(subject.id)
+    );
+
+    // If there's an existing record for a subject not on the timetable for this day,
+    // ensure that subject is still available in the dropdown for editing.
+    if (existingRecord && !scheduledSubjectIds.includes(existingRecord.subject_id)) {
+      const existingSubject = subjects.find(s => s.id === existingRecord.subject_id);
+      if (existingSubject && !scheduledSubjects.some(s => s.id === existingSubject.id)) {
+        return [...scheduledSubjects, existingSubject];
+      }
+    }
+
+    return scheduledSubjects;
+  }, [selectedDate, subjects, timetable, showAllSubjects, existingRecord]);
 
   const mutation = useMutation({
     mutationFn: async (values: MarkAttendanceFormValues) => {
@@ -139,17 +171,31 @@ export const MarkAttendanceDialog = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {subjects.map((subject) => (
-                        <SelectItem key={subject.id} value={subject.id}>
-                          {subject.name}
+                      {filteredSubjects.length > 0 ? (
+                        filteredSubjects.map((subject) => (
+                          <SelectItem key={subject.id} value={subject.id}>
+                            {subject.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="no-subjects" disabled>
+                          No subjects scheduled for this day
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="show-all-subjects">Show all subjects</Label>
+              <Switch
+                id="show-all-subjects"
+                checked={showAllSubjects}
+                onCheckedChange={setShowAllSubjects}
+              />
+            </div>
             <FormField
               control={form.control}
               name="status"
