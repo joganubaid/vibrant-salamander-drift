@@ -1,19 +1,24 @@
 import { useAuth } from '@/context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { AttendanceRecordWithSubject } from '@/types';
+import { AttendanceRecordWithSubject, Subject, AttendanceRecord } from '@/types';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, Edit } from 'lucide-react';
+import { MarkAttendanceDialog } from '@/components/attendance/MarkAttendanceDialog';
 
 const CalendarPage = () => {
   const { user } = useAuth();
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(new Date());
+  const [isMarkAttendanceDialogOpen, setIsMarkAttendanceDialogOpen] = useState(false);
+  const [editingAttendanceRecord, setEditingAttendanceRecord] = useState<AttendanceRecord | null>(null);
 
-  const { data: attendanceRecords, isLoading } = useQuery<AttendanceRecordWithSubject[]>({
+  const { data: attendanceRecords, isLoading: isLoadingAttendance } = useQuery<AttendanceRecordWithSubject[]>({
     queryKey: ['attendance_calendar', user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -21,6 +26,17 @@ const CalendarPage = () => {
         .from('attendance_records')
         .select('*, subjects(name, color)')
         .eq('user_id', user.id);
+      if (error) throw new Error(error.message);
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const { data: subjects, isLoading: isLoadingSubjects } = useQuery<Subject[]>({
+    queryKey: ['subjects', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase.from('subjects').select('*').eq('user_id', user.id);
       if (error) throw new Error(error.message);
       return data || [];
     },
@@ -54,11 +70,31 @@ const CalendarPage = () => {
     }
   };
 
+  const handleMarkAttendanceClick = () => {
+    setEditingAttendanceRecord(null); // Clear any previous editing state
+    setIsMarkAttendanceDialogOpen(true);
+  };
+
+  const handleEditAttendanceClick = (record: AttendanceRecord) => {
+    setEditingAttendanceRecord(record);
+    setIsMarkAttendanceDialogOpen(true);
+  };
+
+  const isLoading = isLoadingAttendance || isLoadingSubjects;
+
   return (
     <div className="max-w-7xl mx-auto">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">Attendance Calendar</h1>
-        <p className="text-muted-foreground">View your attendance history at a glance.</p>
+      <header className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">Attendance Calendar</h1>
+          <p className="text-muted-foreground">View and manage your attendance history.</p>
+        </div>
+        {selectedDay && subjects && subjects.length > 0 && (
+          <Button onClick={handleMarkAttendanceClick}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Mark Attendance for {format(selectedDay, 'MMM d')}
+          </Button>
+        )}
       </header>
 
       {isLoading ? (
@@ -95,10 +131,16 @@ const CalendarPage = () => {
                   <ul className="space-y-3">
                     {recordsForSelectedDay.map(record => (
                       <li key={record.id} className="flex justify-between items-center">
-                        <span className="font-medium">{record.subjects.name}</span>
-                        <Badge variant={getBadgeVariant(record.status)} className="capitalize">
-                          {record.status}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{record.subjects.name}</span>
+                          <Badge variant={getBadgeVariant(record.status)} className="capitalize">
+                            {record.status}
+                          </Badge>
+                        </div>
+                        <Button variant="ghost" size="icon" onClick={() => handleEditAttendanceClick(record)}>
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit attendance</span>
+                        </Button>
                       </li>
                     ))}
                   </ul>
@@ -109,6 +151,16 @@ const CalendarPage = () => {
             </Card>
           </div>
         </div>
+      )}
+
+      {selectedDay && subjects && (
+        <MarkAttendanceDialog
+          open={isMarkAttendanceDialogOpen}
+          onOpenChange={setIsMarkAttendanceDialogOpen}
+          selectedDate={selectedDay}
+          subjects={subjects}
+          existingRecord={editingAttendanceRecord}
+        />
       )}
     </div>
   );
